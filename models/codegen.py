@@ -6,8 +6,6 @@ import torch
 from lightning import LightningModule
 from transformers import AutoModelForCausalLM, AutoTokenizer, PreTrainedModel, PreTrainedTokenizer
 
-NEWLINE = "Ċ"
-
 
 class CodeGen(LightningModule):
     def __init__(
