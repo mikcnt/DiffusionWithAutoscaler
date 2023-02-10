@@ -3,7 +3,7 @@
 import lightning as L
 import torch
 
-from llm_with_autoscaler import AutoScaler, BatchModelOutput, BatchPrompt, ModelOutput, Prompt
+from language_model_with_autoscaler import AutoScaler, BatchModelOutput, BatchPrompt, ModelOutput, Prompt
 from models import CodeGen
 
 PROXY_URL = "https://ulhcn-01gd3c9epmk5xj2y9a9jrrvgt8.litng-ai-03.litng.ai/api/predict"

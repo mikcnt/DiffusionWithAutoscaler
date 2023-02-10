@@ -22,7 +22,7 @@ from lightning.app.utilities.packaging.cloud_compute import CloudCompute
 from pydantic import BaseModel
 from starlette.staticfiles import StaticFiles
 
-from llm_with_autoscaler.cold_start_proxy import ColdStartProxy
+from language_model_with_autoscaler.cold_start_proxy import ColdStartProxy
 
 if _is_aiohttp_available():
     import aiohttp

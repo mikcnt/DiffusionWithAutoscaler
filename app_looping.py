@@ -12,7 +12,7 @@ import uuid
 import lightning as L
 import torch
 
-from llm_with_autoscaler import AutoScaler, BatchImage, BatchPrompt, CustomColdStartProxy, Image, Prompt
+from language_model_with_autoscaler import AutoScaler, BatchImage, BatchPrompt, CustomColdStartProxy, Image, Prompt
 
 PROXY_URL = "https://ulhcn-01gd3c9epmk5xj2y9a9jrrvgt8.litng-ai-03.litng.ai/api/predict"
 

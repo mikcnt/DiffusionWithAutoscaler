@@ -5,7 +5,7 @@ import aiohttp
 from fastapi import HTTPException
 from pydantic import BaseModel
 
-from llm_with_autoscaler.datatypes import Prompt
+from language_model_with_autoscaler.datatypes import Prompt
 
 proxy_url = "https://ulhcn-01gd3c9epmk5xj2y9a9jrrvgt8.litng-ai-03.litng.ai/api/predict"
 

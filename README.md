@@ -11,7 +11,7 @@ To get started, save this code snippet as `app.py` and run the below at the end 
 # !curl https://raw.githubusercontent.com/Lightning-AI/stablediffusion/lit/configs/stable-diffusion/v1-inference.yaml -o v1-inference.yaml
 import lightning as L
 import os, base64, io, torch, ldm
-from llm_with_autoscaler import AutoScaler, BatchPrompt, BatchImage, Prompt, Image, CustomColdStartProxy
+from language_model_with_autoscaler import AutoScaler, BatchPrompt, BatchImage, Prompt, Image, CustomColdStartProxy
 
 PROXY_URL = "https://ulhcn-01gd3c9epmk5xj2y9a9jrrvgt8.litng-ai-03.litng.ai/api/predict"
 

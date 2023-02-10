@@ -11,7 +11,7 @@ import diffusers
 import lightning as L
 import torch
 
-from llm_with_autoscaler import AutoScaler, BatchImage, BatchPrompt, Image, Prompt
+from language_model_with_autoscaler import AutoScaler, BatchImage, BatchPrompt, Image, Prompt
 
 
 class DiffusionServer(L.app.components.PythonServer):
