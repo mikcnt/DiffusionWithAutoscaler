@@ -2,9 +2,17 @@
 # !curl https://raw.githubusercontent.com/Lightning-AI/stablediffusion/lit/configs/stable-diffusion/v1-inference.yaml -o v1-inference.yaml
 # !pip install 'git+https://github.com/Lightning-AI/lightning.git'
 # !pip install 'git+https://github.com/Lightning-AI/stablediffusion.git@lit'
+import asyncio
+import base64
+import io
+import os
+import traceback
+import uuid
+
 import lightning as L
-import os, base64, io, torch, traceback, asyncio, uuid
-from llm_with_autoscaler import AutoScaler, BatchPrompt, BatchImage, Prompt, Image, CustomColdStartProxy
+import torch
+
+from llm_with_autoscaler import AutoScaler, BatchImage, BatchPrompt, CustomColdStartProxy, Image, Prompt
 
 PROXY_URL = "https://ulhcn-01gd3c9epmk5xj2y9a9jrrvgt8.litng-ai-03.litng.ai/api/predict"
 

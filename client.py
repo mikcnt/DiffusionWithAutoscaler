@@ -1,8 +1,9 @@
 import base64
+import threading
 import time
 from pathlib import Path
+
 import requests
-import threading
 
 
 def req_and_write(index):

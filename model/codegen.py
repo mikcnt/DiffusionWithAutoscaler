@@ -6,8 +6,8 @@ import torch
 from lightning import LightningModule
 from transformers import AutoModelForCausalLM, AutoTokenizer, PreTrainedModel, PreTrainedTokenizer
 
-
 NEWLINE = "Ċ"
+
 
 class CodeGen(LightningModule):
     def __init__(
@@ -34,7 +34,7 @@ class CodeGen(LightningModule):
     def predict_step(self, prompts: List[str], batch_idx: int, dataloader_idx: int = 0):
         precision_scope = torch.autocast if self.fp16 else nullcontext
         inference_context = torch.inference_mode if torch.cuda.is_available() else torch.no_grad
-        with inference_context(), precision_scope(self.device.type): # self.model.ema_scope():
+        with inference_context(), precision_scope(self.device.type):  # self.model.ema_scope():
             # TODO: max_length has to be set somewhere
             output = self._predict_step(prompts, max_length=100)
         return output
@@ -83,9 +83,7 @@ class CodeGen(LightningModule):
         # Return decoded predictions
         # Notice that if the prompt is not repeated in output, `prompts_ids_shift` will be 0, and therefore
         # slicing will have no effect
-        decoded_predictions = self.tokenizer.batch_decode(
-            tokens[:, prompts_ids_shift:, ...]
-        )
+        decoded_predictions = self.tokenizer.batch_decode(tokens[:, prompts_ids_shift:, ...])
 
         # Truncate outputs (e.g., for models like CodeGen)
         decoded_predictions = self.truncate_batch(decoded_predictions)

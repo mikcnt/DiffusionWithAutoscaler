@@ -2,9 +2,16 @@
 # !pip install 'git+https://github.com/Lightning-AI/LAI-API-Access-UI-Component.git'
 # !pip install 'git+https://github.com/Lightning-AI/DiffusionWithAutoscaler.git'
 
+import base64
+import io
+import os
+
+import deepspeed
+import diffusers
 import lightning as L
-import os, base64, io, torch, diffusers, deepspeed
-from llm_with_autoscaler import AutoScaler, BatchPrompt, BatchImage, Prompt, Image
+import torch
+
+from llm_with_autoscaler import AutoScaler, BatchImage, BatchPrompt, Image, Prompt
 
 
 class DiffusionServer(L.app.components.PythonServer):

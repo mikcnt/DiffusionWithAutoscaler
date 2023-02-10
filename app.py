@@ -2,8 +2,8 @@
 # !curl https://raw.githubusercontent.com/Lightning-AI/stablediffusion/lit/configs/stable-diffusion/v1-inference.yaml -o v1-inference.yaml
 import lightning as L
 import torch
-from llm_with_autoscaler import AutoScaler, BatchPrompt, Prompt, BatchModelOutput, \
-    ModelOutput
+
+from llm_with_autoscaler import AutoScaler, BatchModelOutput, BatchPrompt, ModelOutput, Prompt
 from model import CodeGen
 
 PROXY_URL = "https://ulhcn-01gd3c9epmk5xj2y9a9jrrvgt8.litng-ai-03.litng.ai/api/predict"

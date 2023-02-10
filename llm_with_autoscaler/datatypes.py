@@ -1,5 +1,7 @@
 from typing import Any, Dict, List, Optional
+
 from pydantic import BaseModel
+
 
 class Prompt(BaseModel):
     text: Optional[str]
@@ -11,9 +13,7 @@ class Prompt(BaseModel):
     @staticmethod
     def request_code_sample(url: str) -> str:
         return (
-            """import base64
-from pathlib import Path
-import requests
+            """import requests
 
 response = requests.post('"""
             + url
@@ -52,16 +52,21 @@ response = requests.post('"""
 """
         )
 
+
 class ModelOutput(BaseModel):
     text: Optional[str]
+
     @staticmethod
     def get_sample_data() -> Dict[Any, Any]:
-        return {"text": """        dic = {}
+        return {
+            "text": """        dic = {}
         for i in range(len(nums)):
             if nums[i] in dic:
                 return [dic[nums[i]], i]
             dic[target - nums[i]] = i
-        return []"""}
+        return []"""
+        }
+
 
 class BatchModelOutput(BaseModel):
     # Note: field name must be `outputs`
