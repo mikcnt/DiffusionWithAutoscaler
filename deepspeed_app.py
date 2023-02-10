@@ -4,13 +4,13 @@
 
 import lightning as L
 import os, base64, io, torch, diffusers, deepspeed
-from diffusion_with_autoscaler import AutoScaler, BatchText, BatchImage, Text, Image
+from llm_with_autoscaler import AutoScaler, BatchPrompt, BatchImage, Prompt, Image
 
 
 class DiffusionServer(L.app.components.PythonServer):
     def __init__(self, *args, **kwargs):
         super().__init__(
-            input_type=BatchText,
+            input_type=BatchPrompt,
             output_type=BatchImage,
             *args,
             **kwargs,
@@ -51,7 +51,7 @@ component = AutoScaler(
     scale_in_interval=600,
     max_batch_size=6,
     timeout_batching=0.3,
-    input_type=Text,
+    input_type=Prompt,
     output_type=Image,
 )
 

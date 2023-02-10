@@ -1,8 +1,10 @@
 # !pip install 'git+https://github.com/Lightning-AI/LAI-API-Access-UI-Component.git'
 # !curl https://raw.githubusercontent.com/Lightning-AI/stablediffusion/lit/configs/stable-diffusion/v1-inference.yaml -o v1-inference.yaml
 import lightning as L
-import os, base64, io, torch
-from diffusion_with_autoscaler import AutoScaler, BatchText, BatchImage, Text, Image, CustomColdStartProxy
+import torch
+from llm_with_autoscaler import AutoScaler, BatchPrompt, Prompt, BatchModelOutput, \
+    ModelOutput
+from model import CodeGen
 
 PROXY_URL = "https://ulhcn-01gd3c9epmk5xj2y9a9jrrvgt8.litng-ai-03.litng.ai/api/predict"
 
@@ -12,47 +14,35 @@ class FlashAttentionBuildConfig(L.BuildConfig):
         return ["pip install 'git+https://github.com/Lightning-AI/stablediffusion.git@lit'"]
 
 
-class DiffusionServer(L.app.components.PythonServer):
+class LanguageModelServer(L.app.components.PythonServer):
     def __init__(self, *args, **kwargs):
         super().__init__(
-            input_type=BatchText,
-            output_type=BatchImage,
-            cloud_build_config=FlashAttentionBuildConfig(),
+            input_type=BatchPrompt,
+            output_type=BatchModelOutput,
+            # cloud_build_config=FlashAttentionBuildConfig(),
             *args,
             **kwargs,
         )
 
     def setup(self):
-        import ldm
-
-        if not os.path.exists("v1-5-pruned-emaonly.ckpt"):
-            cmd = "curl -C - https://pl-public-data.s3.amazonaws.com/dream_stable_diffusion/v1-5-pruned-emaonly.ckpt -o v1-5-pruned-emaonly.ckpt"
-            os.system(cmd)
+        # TODO: download model and tokenizer here, don't use transformers api
         device = "cuda" if torch.cuda.is_available() else "cpu"
-        self._model = ldm.lightning.LightningStableDiffusion(
-            config_path="v1-inference.yaml",
-            checkpoint_path="v1-5-pruned-emaonly.ckpt",
-            device=device,
-            deepspeed=True,  # Supported on Ampere and RTX, skipped otherwise.
-            context="no_grad",
-            flash_attention="triton",
-            steps=30,
+        self._model = CodeGen(
+            checkpoint_path="Salesforce/codegen-350M-multi",
+            device=torch.device(device),
+            fp16=False,
+            use_deepspeed=True,  # Supported on Ampere and RTX, skipped otherwise.
+            enable_cuda_graph=False,
         )
 
     def predict(self, requests):
         texts = [request.text for request in requests.inputs]
-        images = self._model.predict_step(prompts=texts, batch_idx=0)
-        results = []
-        for image in images:
-            buffer = io.BytesIO()
-            image.save(buffer, format="PNG")
-            image_str = base64.b64encode(buffer.getvalue()).decode("utf-8")
-            results.append(image_str)
-        return BatchImage(outputs=[{"image": image_str} for image_str in results])
+        outputs = self._model.predict_step(prompts=texts, batch_idx=0)
+        return BatchModelOutput(outputs=[{"text": result} for result in outputs])
 
 
 component = AutoScaler(
-    DiffusionServer,  # The component to scale
+    LanguageModelServer,  # The component to scale
     cloud_compute=L.CloudCompute("gpu-rtx", disk_size=80),
     # autoscaler args
     min_replicas=1,
@@ -62,9 +52,9 @@ component = AutoScaler(
     scale_in_interval=600,
     max_batch_size=3,
     timeout_batching=0.3,
-    input_type=Text,
-    output_type=Image,
-    cold_start_proxy=CustomColdStartProxy(proxy_url=PROXY_URL),
+    input_type=Prompt,
+    output_type=ModelOutput,
+    # cold_start_proxy=CustomColdStartProxy(proxy_url=PROXY_URL),
 )
 
 app = L.LightningApp(component)

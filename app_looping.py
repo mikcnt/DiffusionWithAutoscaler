@@ -4,7 +4,7 @@
 # !pip install 'git+https://github.com/Lightning-AI/stablediffusion.git@lit'
 import lightning as L
 import os, base64, io, torch, traceback, asyncio, uuid
-from diffusion_with_autoscaler import AutoScaler, BatchText, BatchImage, Text, Image, CustomColdStartProxy
+from llm_with_autoscaler import AutoScaler, BatchPrompt, BatchImage, Prompt, Image, CustomColdStartProxy
 
 PROXY_URL = "https://ulhcn-01gd3c9epmk5xj2y9a9jrrvgt8.litng-ai-03.litng.ai/api/predict"
 
@@ -12,7 +12,7 @@ PROXY_URL = "https://ulhcn-01gd3c9epmk5xj2y9a9jrrvgt8.litng-ai-03.litng.ai/api/p
 class DiffusionServer(L.app.components.PythonServer):
     def __init__(self, *args, **kwargs):
         super().__init__(
-            input_type=BatchText,
+            input_type=BatchPrompt,
             output_type=BatchImage,
             cloud_build_config=L.BuildConfig(requirements=["flash-attn"]),
             *args,
@@ -84,7 +84,7 @@ class DiffusionServer(L.app.components.PythonServer):
         except Exception:
             print(traceback.print_exc())
 
-    async def predict(self, request: BatchText):
+    async def predict(self, request: BatchPrompt):
         if self._lock is None:
             self._lock = asyncio.Lock()
         if self._predictor_task is None:
@@ -108,9 +108,9 @@ component = AutoScaler(
     scale_in_interval=600,
     max_batch_size=6,
     timeout_batching=0,
-    input_type=Text,
+    input_type=Prompt,
     output_type=Image,
     batching="streamed",
 )
-# component = DiffusionServer()
+# component = LanguageModelServer()
 app = L.LightningApp(component)
